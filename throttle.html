@@ -11,6 +11,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            /* flex-direction: column; */
         }
 
         #box {
@@ -18,32 +19,54 @@
             height: 300px;
             border: 2px solid #000;
             background-color: #f0f0f0;
+            margin-bottom: 20px;
+        }
+
+        #Scroll {
+            width: 100%;
+            height: 1000vh;
+            /* background-color: #e0e0e0; */
         }
     </style>
 </head>
 
 <body>
-    <div id="box">Move your mouse from here..</div>
+    <div id="box">Move your mouse here...</div>
+    <div id="Scroll"></div>
 
-</body>
-<script>
-    const throttleHandling = (func,delays)=>{
-        let lastCall = 0;
-        return (...args)=>{
-            let now = Date.now();
-            if(now-lastCall>=delays){
-                lastCall = now;
-                func.apply(this,args);
+    <script>
+        // Throttle function: Ensures a function is called at most once every `limit` milliseconds
+        const throttle = (func, limit) => {
+            let lastCall = 0;
+            return (...args) => {
+                const now = Date.now();
+                if (now - lastCall >= limit) {
+                    lastCall = now;
+                    func.apply(this, args);
+                }
             };
         };
-    }
-    const logMousePosition = (value)=>{
-        console.log('mouse moving.....',value);
-    };
 
-    const throttleLogMousePosition = throttleHandling(logMousePosition,5000);
-    const box = document.getElementById('box');
-    box.addEventListener('mousemove',throttleLogMousePosition)
-</script>
+        // Mouse move handler (throttled)
+        const logMousePosition = (event) => {
+            console.log('Mouse moving at position:', { x: event.clientX, y: event.clientY });
+        };
+        const throttledMouseMoveHandler = throttle(logMousePosition, 500);
+
+        // Scroll handler (throttled)
+        const handleScrollPosition = (event) => {
+            console.log('Scrolled to position:', window.scrollY);
+        };
+        const throttledScrollHandler = throttle(handleScrollPosition, 500);
+
+        // Add mousemove event listener to #box
+        const box = document.getElementById('box');
+        box.addEventListener('mousemove', throttledMouseMoveHandler);
+
+        // Add scroll event listener to #Scroll
+        const scrollableElement = document.getElementById('Scroll');
+        scrollableElement.addEventListener('scroll', throttledScrollHandler);
+    </script>
+</body>
 
 </html>
