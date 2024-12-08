@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Throttling Example</title>
+    <style>
+        body {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #box {
+            width: 300px;
+            height: 300px;
+            border: 2px solid #000;
+            background-color: #f0f0f0;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="box">Move your mouse from here..</div>
+
+</body>
+<script>
+    const throttleHandling = (func,delays)=>{
+        let lastCall = 0;
+        return (...args)=>{
+            let now = Date.now();
+            if(now-lastCall>=delays){
+                lastCall = now;
+                func.apply(this,args);
+            };
+        };
+    }
+    const logMousePosition = (value)=>{
+        console.log('mouse moving.....',value);
+    };
+
+    const throttleLogMousePosition = throttleHandling(logMousePosition,5000);
+    const box = document.getElementById('box');
+    box.addEventListener('mousemove',throttleLogMousePosition)
+</script>
+
+</html>
